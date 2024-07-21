@@ -21,26 +21,6 @@ router.post("/shorten", async (req, res) => {
   }
 });
 
-// Route to redirect short URL to the original long URL
-router.get("/:shortUrl", async (req, res) => {
-  const { shortUrl } = req.params;
-  const referrer = req.get("Referer") || "Direct";
-
-  try {
-    const url = await Url.findOne({ shortUrl });
-    if (url) {
-      url.clicks++;
-      url.clickDetails.push({ referrer });
-      await url.save();
-      return res.redirect(url.longUrl);
-    } else {
-      return res.status(404).json({ error: "URL not found" });
-    }
-  } catch (error) {
-    res.status(400).json({ error: "Redirection failed", msg: error.message });
-  }
-});
-
 // Route to get analytics for a short URL
 router.get("/analytics/:shortUrl", async (req, res) => {
   const { shortUrl } = req.params;
